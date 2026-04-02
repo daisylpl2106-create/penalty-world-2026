@@ -2,180 +2,133 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Penalty World 2026</title>
+<title>Penalty World PRO</title>
 <style>
-body { font-family: Arial; background:#0b6623; color:white; text-align:center; }
-button { padding:10px; margin:5px; cursor:pointer; }
-.hidden { display:none; }
-.goal { margin:20px auto; width:300px; height:150px; border:5px solid white; position:relative; }
-.keeper { position:absolute; bottom:0; left:120px; font-size:40px; }
+body {
+  margin:0;
+  background: linear-gradient(#0b6623,#063d14);
+  color:white;
+  font-family:Arial;
+  text-align:center;
+}
+
+h1 { margin-top:20px; }
+
+.goal {
+  width:400px;
+  height:200px;
+  border:5px solid white;
+  margin:30px auto;
+  position:relative;
+  overflow:hidden;
+}
+
+.keeper {
+  position:absolute;
+  bottom:0;
+  left:170px;
+  font-size:50px;
+  transition: all 0.4s ease;
+}
+
+.ball {
+  position:absolute;
+  bottom:10px;
+  left:190px;
+  font-size:25px;
+  transition: all 0.5s ease;
+}
+
+button {
+  padding:12px;
+  margin:10px;
+  font-size:16px;
+  cursor:pointer;
+  border:none;
+  border-radius:8px;
+}
+
+#result {
+  font-size:24px;
+  margin-top:10px;
+}
 </style>
 </head>
 
 <body>
 
-<h1>🏆 Penalty World 2026</h1>
+<h1>🏆 Penalty World PRO</h1>
 
-<div id="menu">
-  <button onclick="startGame()">JUGAR MUNDIAL</button>
+<div class="goal">
+  <div id="keeper" class="keeper">🧍‍♂️</div>
+  <div id="ball" class="ball">⚽</div>
 </div>
 
-<div id="teamSelect" class="hidden">
-  <h2>Elige tu equipo</h2>
-  <div id="teams"></div>
-</div>
+<h2 id="result">Dispara</h2>
 
-<div id="groupStage" class="hidden">
-  <h2>Fase de Grupos</h2>
-  <div id="groupTable"></div>
-  <button onclick="playNextMatch()">Jugar siguiente partido</button>
-</div>
+<button onclick="shoot('left')">⬅️</button>
+<button onclick="shoot('center')">⬆️</button>
+<button onclick="shoot('right')">➡️</button>
 
-<div id="match" class="hidden">
-  <h2 id="matchTitle"></h2>
-
-  <div class="goal">
-    <div id="keeper" class="keeper">🧍‍♂️</div>
-  </div>
-
-  <h3 id="result"></h3>
-
-  <button onclick="shoot('left')">⬅️</button>
-  <button onclick="shoot('center')">⬆️</button>
-  <button onclick="shoot('right')">➡️</button>
-
-  <p id="score"></p>
-</div>
-
-<div id="knockout" class="hidden">
-  <h2>Eliminatorias</h2>
-  <div id="bracket"></div>
-  <button onclick="playKnockout()">Jugar</button>
-</div>
-
-<div id="winner" class="hidden">
-  <h1>🏆 CAMPEÓN</h1>
-  <h2 id="champion"></h2>
-</div>
+<h3 id="score">0 / 5</h3>
 
 <script>
-const teams = [
-"Argentina","Brasil","Francia","España",
-"México","USA","Alemania","Portugal"
-];
-
-let playerTeam = "";
-let group = [];
-let matches = [];
-let currentMatch = 0;
 let goals = 0;
 let shots = 0;
 
-function startGame(){
-  document.getElementById("menu").classList.add("hidden");
-  document.getElementById("teamSelect").classList.remove("hidden");
-
-  let html = "";
-  teams.forEach(t=>{
-    html += `<button onclick="selectTeam('${t}')">${t}</button>`;
-  });
-  document.getElementById("teams").innerHTML = html;
-}
-
-function selectTeam(team){
-  playerTeam = team;
-  group = [...teams].sort(()=>0.5-Math.random()).slice(0,4);
-  generateMatches();
-
-  document.getElementById("teamSelect").classList.add("hidden");
-  document.getElementById("groupStage").classList.remove("hidden");
-  renderTable();
-}
-
-function generateMatches(){
-  matches = [];
-  for(let i=0;i<group.length;i++){
-    for(let j=i+1;j<group.length;j++){
-      matches.push([group[i],group[j]]);
-    }
-  }
-}
-
-function renderTable(){
-  let html = "<h3>Grupo</h3>";
-  group.forEach(t=>{
-    html += `<p>${t}</p>`;
-  });
-  document.getElementById("groupTable").innerHTML = html;
-}
-
-function playNextMatch(){
-  if(currentMatch >= matches.length){
-    startKnockout();
-    return;
-  }
-
-  let m = matches[currentMatch];
-  document.getElementById("groupStage").classList.add("hidden");
-  document.getElementById("match").classList.remove("hidden");
-
-  document.getElementById("matchTitle").innerText = m[0]+" vs "+m[1];
-
-  goals = 0;
-  shots = 0;
-  updateScore();
-}
-
 function shoot(dir){
-  const opts = ["left","center","right"];
-  const keeper = opts[Math.floor(Math.random()*3)];
+  const keeper = ["left","center","right"][Math.floor(Math.random()*3)];
+
+  const ball = document.getElementById("ball");
   const k = document.getElementById("keeper");
 
-  if(keeper==="left") k.style.left="20px";
-  if(keeper==="center") k.style.left="120px";
-  if(keeper==="right") k.style.left="220px";
+  // reset posiciones
+  ball.style.bottom = "10px";
+  ball.style.left = "190px";
 
-  shots++;
+  setTimeout(()=>{
 
-  if(dir===keeper){
-    document.getElementById("result").innerText="ATAJADO";
-  } else {
-    document.getElementById("result").innerText="GOOOL";
-    goals++;
-  }
+    // movimiento balón
+    if(dir==="left"){
+      ball.style.left="40px";
+      ball.style.bottom="150px";
+    }
+    if(dir==="center"){
+      ball.style.left="190px";
+      ball.style.bottom="160px";
+    }
+    if(dir==="right"){
+      ball.style.left="340px";
+      ball.style.bottom="150px";
+    }
 
-  updateScore();
+    // movimiento portero
+    if(keeper==="left") k.style.left="20px";
+    if(keeper==="center") k.style.left="170px";
+    if(keeper==="right") k.style.left="320px";
 
-  if(shots>=5){
-    endMatch();
-  }
-}
+    setTimeout(()=>{
+      if(dir===keeper){
+        document.getElementById("result").innerText="❌ ATAJADA";
+      } else {
+        document.getElementById("result").innerText="⚽ GOOOOOL";
+        goals++;
+      }
 
-function updateScore(){
-  document.getElementById("score").innerText =
-  "Goles: "+goals+" / 5";
-}
+      shots++;
+      document.getElementById("score").innerText = goals+" / 5";
 
-function endMatch(){
-  currentMatch++;
-  document.getElementById("match").classList.add("hidden");
-  document.getElementById("groupStage").classList.remove("hidden");
-}
+      if(shots===5){
+        setTimeout(()=>{
+          alert("Partido terminado: "+goals+" goles");
+          goals=0;
+          shots=0;
+        },500);
+      }
 
-function startKnockout(){
-  document.getElementById("groupStage").classList.add("hidden");
-  document.getElementById("knockout").classList.remove("hidden");
+    },400);
 
-  document.getElementById("bracket").innerText =
-  "Semifinal → Final";
-}
-
-function playKnockout(){
-  document.getElementById("knockout").classList.add("hidden");
-  document.getElementById("winner").classList.remove("hidden");
-
-  let champ = teams[Math.floor(Math.random()*teams.length)];
-  document.getElementById("champion").innerText = champ;
+  },100);
 }
 </script>
 
